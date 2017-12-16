@@ -8,17 +8,15 @@
  *
  */
 
+#include <Arduino.h>
 #include "Button.h"
 
 // Create a button object on GPIO0
 Button b(0);
 
 
-
 void setup() {
   Serial.begin(115200); Serial.println("\r\n\r\n");
-
-  static volatile int x = 0;
 
   // Holding longer than 3000 ms will trigger a button hold callback
   b.holdDuration(3000); // Default 5000
