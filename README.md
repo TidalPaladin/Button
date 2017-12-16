@@ -1,6 +1,6 @@
-# Arduino Button
+# ESP8266 Button
 
-This button library simplifies the implementation of GPIO based callbacks. The button object is assigned to a GPIO.
+This button library simplifies the implementation of GPIO based callbacks on the ESP8266. The button object is assigned to a GPIO.
 On assignment the object automatically detects and stores the resting state of the pin. Users can assign callbacks
 to be run when the button is pressed or held. The duration that distinguishes a press from a hold can be set by the
 user. Debouncing is handled by the library, with the debounce interval being user assignable.
@@ -8,13 +8,21 @@ user. Debouncing is handled by the library, with the debounce interval being use
 Callbacks are run within an ISR, thus ISR best practices apply. Callbacks should be kept short, and `volatile` should
 be used when necessary.
 
+**Requirements**
+
+This library makes use of `<FunctionalInterrupt.h>` to attach `std::function<void()>` callbacks through `attachInterrupt()`. This is currently available only in the `stage` version of the ESP8266 Arduino framework.
+
 
 ## Methods
 
-** Constructor **
-`Button b(const gpio_num_t); // Construct a button on a given GPIO`
+**Constructor**
 
-** Setting callbacks **
+```
+Button b(const gpio_num_t); // Construct a button on a given GPIO
+```
+
+**Setting callbacks**
+
 Callbacks are passed as `std::function<void()>` objects and are copied into the `Button` object.
 
 ```
@@ -27,7 +35,8 @@ b.holdCallback([]() {
 });
 ```
 
-** Setting timings **
+**Setting timings**
+
 ```
 // Holding longer than 3000 ms will trigger a button hold callback
 b.holdDuration(3000); // Default 5000
