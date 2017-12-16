@@ -1,4 +1,4 @@
-#include "button.h"
+#include "Button.h"
 
 
 Button::Button(const gpio_num_t p) :
@@ -6,22 +6,39 @@ _pin(p),
 _RESTING_STATE(_findRestingState(p))
 {
   pinMode(p,INPUT);
- 
-  attachInterrupt(p, std::bind(&Button::_ISR, this), CHANGE);  
+
+  // Attach using lambda function instead of std::bind
+  // std::bind(&Button::_ISR, this)
+  attachInterrupt(
+    p, 
+    [this]() { this->_ISR(); },
+    CHANGE
+  );  
 }
+ 
 
 Button::~Button() {
   detachInterrupt(_pin);
 }
 
 
-Button &Button::pressCallback(button_callback_t &func) {
-  _pressCallback = &func;
+Button &Button::pressCallback(button_callback_t func) {
+  _pressCallback = func;
   return *this;
 }
 
-Button &Button::holdCallback(button_callback_t &func) {
-  _holdCallback = &func;
+Button &Button::holdCallback(button_callback_t func) {
+  _holdCallback = func;
+  return *this;
+}
+
+Button &Button::holdDuration(unsigned long time_ms) {
+  _holdDuration_ms = time_ms;
+  return *this;
+}
+
+Button &Button::refractoryPeriod(unsigned long time_ms) {
+  _refractory_ms = time_ms;
   return *this;
 }
 
@@ -37,8 +54,8 @@ void Button::_ISR() {
 
   // Act only on button release
   if(digitalRead(_pin) == _RESTING_STATE) {
-    if( ELAPSED_MS >= _holdDuration_ms && _holdCallback) (*_holdCallback)();
-    else if(_pressCallback) (*_pressCallback)();
+    if( ELAPSED_MS >= _holdDuration_ms && _holdCallback) (_holdCallback)();
+    else if(_pressCallback) (_pressCallback)();
   }
 
   last_event = millis();

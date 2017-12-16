@@ -52,21 +52,21 @@ class Button {
     /**
      * @brief Sets the callback to be run on a button press
      * 
-     * @param func A pointer to the callback
+     * @param func A std::function object / lambda function
      * 
      * @return this
      */
-    Button &pressCallback(button_callback_t& func);
+    Button &pressCallback(button_callback_t func);
 
 
     /**
      * @brief Sets the callback to be run on a button hold
      * 
-     * @param func A pointer to the callback
+     * @param func A std::function object / lambda function
      * 
      * @return this
      */
-    Button &holdCallback(button_callback_t& func);
+    Button &holdCallback(button_callback_t func);
 
 
     /**
@@ -77,7 +77,7 @@ class Button {
      * 
      * @return this
      */
-    Button &holdDuration(byte button, unsigned long duration);
+    Button &holdDuration(unsigned long time_ms);
     const unsigned long holdDuration() { return _holdDuration_ms; }
 
 
@@ -86,12 +86,19 @@ class Button {
      * subsequent button presses will be ignored. This serves as a debounce
      * tool
      * 
-     * @param time The time in milliseconds
+     * @param time_ms The time in milliseconds
      * 
      * @return this
      */
     Button &refractoryPeriod(unsigned long time_ms);
     const unsigned long refractoryPeriod() { return _refractory_ms; }
+
+    /**
+     * @brief Operator bool. 
+     * 
+     * Returns true if a valid press or hold callback exists. False otherwise.
+     */
+    operator bool() { return _pressCallback || _holdCallback; }
     
 
   private:
@@ -99,7 +106,7 @@ class Button {
     const gpio_num_t _pin;
     const bool _RESTING_STATE;
 
-    button_callback_t *_pressCallback = nullptr, *_holdCallback = nullptr;
+    button_callback_t _pressCallback, _holdCallback;
 
     unsigned long _refractory_ms = 100; // Debouncing period
     unsigned long _holdDuration_ms = 5000;
@@ -107,8 +114,8 @@ class Button {
 
 
     /**
-     * @brief Member ISR function. This is called using std::bind with this as
-     * a parameter. It distinguishes direction of button change and handles debounce
+     * @brief Member ISR function. This is called using a std::function<void()> object
+     * It distinguishes direction of button change and handles debounce
      * 
      */
     void _ISR();
