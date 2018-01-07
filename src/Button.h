@@ -21,7 +21,6 @@ typedef uint8_t gpio_num_t;
 typedef uint8_t gpio_mode_t;
 typedef std::function<void()> button_callback_t;
 
-
 class Button {
 
   public:
@@ -69,6 +68,7 @@ class Button {
      */
     bool isPressed() const { return read() != _RESTING; }
 
+
     /**
      * @brief Sets the callback to be run on a button press
      * 
@@ -76,8 +76,8 @@ class Button {
      * 
      * @return this
      */
-    Button &pressCallback(button_callback_t func);
-    bool pressCallback() { return _pressCallback == nullptr; }
+    Button &onPress(const button_callback_t &func); 
+    bool onPress() { return _pressCallback == nullptr; }
 
 
     /**
@@ -87,8 +87,8 @@ class Button {
      * 
      * @return this
      */
-    Button &holdCallback(button_callback_t func);
-    bool holdCallback() { return _holdCallback == nullptr; }
+    Button &onHold(const button_callback_t &func);
+    bool onHold() { return _holdCallback == nullptr; }
 
     /**
      * @brief Sets the callback to run when the button changes state.
@@ -100,8 +100,8 @@ class Button {
      * @param func A std::function object / lambda function
      * 
      */
-    Button &changeCallback(button_callback_t func);
-    bool changeCallback() { return _changeCallback == nullptr; }
+    Button &onChange(const button_callback_t &func);
+    bool onChange() { return _changeCallback == nullptr; }
 
 
     /**

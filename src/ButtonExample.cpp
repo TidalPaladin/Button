@@ -10,7 +10,7 @@
 
 #include <Arduino.h>
 #include "Button.h"
-
+ 
 // Create a button object on GPIO0
 Button b(0, INPUT_PULLUP);
 
@@ -27,8 +27,8 @@ void setup() {
   b.refractoryPeriod(50);  // Default 100
 
   // Create a callback to run on button press
-  b.pressCallback([&]() {
-    /**
+  b.onPress([&]() {
+    /** 
      * NOTE
      * Callbacks are run inside an ISR, so ISR rules apply:
      *  No excessively long operations
@@ -41,21 +41,21 @@ void setup() {
   });
 
   // Create a callback to run on button hold
-  b.holdCallback([&]() {
+  b.onHold([&]() {
     Serial.println("Button held!");
   });
-
+ 
   // Create a callback to run when the button changes state.
   // This is run before the press / hold callback.
   // Depending on how long callbacks take, state functions of Button
   // may return out of date results. 
-  b.changeCallback([]() {
-    if( b.isPressed() )
-      Serial.println("The button went down");
-    else
-      Serial.println("The button went up");
-    Serial.println( b.read() );
-  });
+  // b.changeCallback([]() {
+  //   if( b.isPressed() )
+  //     Serial.println("The button went down");
+  //   else
+  //     Serial.println("The button went up");
+  //   Serial.println( b.read() );
+  // });
   
 }
 

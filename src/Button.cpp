@@ -22,17 +22,17 @@ Button::~Button() {
 }
 
 
-Button &Button::pressCallback(const button_callback_t func) {
+Button &Button::onPress(const button_callback_t &func) {
   _pressCallback = func;
   return *this;
-}
+} 
 
-Button &Button::holdCallback(const button_callback_t func) {
+Button &Button::onHold(const button_callback_t &func) {
   _holdCallback = func;
   return *this;
 }
 
-Button &Button::changeCallback(const button_callback_t func) {
+Button &Button::onChange(const button_callback_t &func) {
   _changeCallback = func;
   return *this;
 }
@@ -56,6 +56,8 @@ void Button::_ISR() {
   if (ELAPSED_MS < _refractory_ms) {
     return;
   }
+
+  // Capture state of pin and update time
   const bool RELEASED = ( digitalRead(_PIN) == _RESTING );
   last_event = millis();
 
