@@ -1,11 +1,11 @@
 #include "Button.h"
 
 
-Button::Button(const gpio_num_t p) :
-_pin(p),
-_RESTING_STATE(_findRestingState(p))
+Button::Button(const gpio_num_t p, const gpio_mode_t mode, const uint8_t released_state) :
+_PIN(p),
+_RESTING(released_state)
 {
-  pinMode(p,INPUT);
+  pinMode(p, mode);
 
   // Attach using lambda function instead of std::bind
   // std::bind(&Button::_ISR, this)
@@ -18,53 +18,57 @@ _RESTING_STATE(_findRestingState(p))
  
 
 Button::~Button() {
-  detachInterrupt(_pin);
+  detachInterrupt(_PIN);
 }
 
 
-Button &Button::pressCallback(button_callback_t func) {
+Button &Button::pressCallback(const button_callback_t func) {
   _pressCallback = func;
   return *this;
 }
 
-Button &Button::holdCallback(button_callback_t func) {
+Button &Button::holdCallback(const button_callback_t func) {
   _holdCallback = func;
   return *this;
 }
 
-Button &Button::holdDuration(unsigned long time_ms) {
+Button &Button::changeCallback(const button_callback_t func) {
+  _changeCallback = func;
+  return *this;
+}
+
+Button &Button::holdDuration(const unsigned long time_ms) {
   _holdDuration_ms = time_ms;
   return *this;
 }
 
-Button &Button::refractoryPeriod(unsigned long time_ms) {
+Button &Button::refractoryPeriod(const unsigned long time_ms) {
   _refractory_ms = time_ms;
   return *this;
 }
 
 void Button::_ISR() {
   
-  static volatile unsigned long last_event = 0;
-  const volatile unsigned long ELAPSED_MS = abs(millis() - last_event);
+  static unsigned long last_event = 0;
+  const unsigned long ELAPSED_MS = millis() - last_event;
 
   // Debounce
   if (ELAPSED_MS < _refractory_ms) {
     return;
   }
-
-  // Act only on button release
-  if(digitalRead(_pin) == _RESTING_STATE) {
-    if( ELAPSED_MS >= _holdDuration_ms && _holdCallback) (_holdCallback)();
-    else if(_pressCallback) (_pressCallback)();
-  }
-
+  const bool RELEASED = ( digitalRead(_PIN) == _RESTING );
   last_event = millis();
 
-}
+  // Run the change callback no matter what
+  if(_changeCallback) {
+    (_changeCallback)();
+  }
 
-const bool Button::_findRestingState(gpio_num_t pin) {
-  pinMode(pin, INPUT);
-  return digitalRead(pin);
-}
+  // Run press / hold on button release
+  if( RELEASED ) {
+    if( ELAPSED_MS < _holdDuration_ms && _pressCallback) (_pressCallback)();
+    else if(_holdCallback) (_holdCallback)();
+  }
 
+}
 
