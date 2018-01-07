@@ -29,8 +29,12 @@ class Button {
      * @brief Constructs a button attached to the given pin
      * 
      * @param pin The GPIO to which the button will be attached
-     * @param mode Pass INPUT or INPUT_PULLUP to flip button state
-     * @param released_state The GPIO state when the button is released
+     * @param mode 
+     *   - INPUT -> The GPIO is low on open circuit
+     *   - INPUT_PULLUP -> The GPIO is pulled high on open circuit
+     * @param released_state
+     *   - HIGH
+     *   - LOW
      * 
      */
     Button(gpio_num_t pin, gpio_mode_t mode = INPUT, uint8_t released_state = HIGH);
