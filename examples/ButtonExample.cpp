@@ -49,13 +49,13 @@ void setup() {
   // This is run before the press / hold callback.
   // Depending on how long callbacks take, state functions of Button
   // may return out of date results. 
-  // b.changeCallback([]() {
-  //   if( b.isPressed() )
-  //     Serial.println("The button went down");
-  //   else
-  //     Serial.println("The button went up");
-  //   Serial.println( b.read() );
-  // });
+  b.onChange([]() {
+    if( b.isPressed() )
+      Serial.println("The button went down");
+    else
+      Serial.println("The button went up");
+    Serial.println( b.read() );
+  });
   
 }
 
