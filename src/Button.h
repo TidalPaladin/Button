@@ -19,9 +19,11 @@
 
 typedef uint8_t gpio_num_t;
 typedef uint8_t gpio_mode_t;
-typedef std::function<void()> button_callback_t;
+
 
 class Button {
+
+  typedef std::function<void()> callback_t;
 
   public:
 
@@ -80,7 +82,7 @@ class Button {
      * 
      * @return this
      */
-    Button &onPress(const button_callback_t &func); 
+    Button &onPress(const callback_t &func); 
     bool onPress() { return _pressCallback == nullptr; }
 
 
@@ -91,7 +93,7 @@ class Button {
      * 
      * @return this
      */
-    Button &onHold(const button_callback_t &func);
+    Button &onHold(const callback_t &func);
     bool onHold() { return _holdCallback == nullptr; }
 
     /**
@@ -104,7 +106,7 @@ class Button {
      * @param func A std::function object / lambda function
      * 
      */
-    Button &onChange(const button_callback_t &func);
+    Button &onChange(const callback_t &func);
     bool onChange() { return _changeCallback == nullptr; }
 
 
@@ -145,7 +147,7 @@ class Button {
     const gpio_num_t _PIN;
     const uint8_t _RESTING;
 
-    button_callback_t _pressCallback, _holdCallback, _changeCallback;
+    callback_t _pressCallback, _holdCallback, _changeCallback;
 
     unsigned long _refractory_ms = 100; // Debouncing period
     unsigned long _holdDuration_ms = 5000;

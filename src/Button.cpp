@@ -22,17 +22,17 @@ Button::~Button() {
 }
 
 
-Button &Button::onPress(const button_callback_t &func) {
+Button &Button::onPress(const Button::callback_t &func) {
   _pressCallback = func;
   return *this;
 } 
 
-Button &Button::onHold(const button_callback_t &func) {
+Button &Button::onHold(const Button::callback_t &func) {
   _holdCallback = func;
   return *this;
 }
 
-Button &Button::onChange(const button_callback_t &func) {
+Button &Button::onChange(const Button::callback_t &func) {
   _changeCallback = func;
   return *this;
 }
