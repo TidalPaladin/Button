@@ -5,12 +5,12 @@ Button::Button(const gpio_num_t p, const gpio_mode_t mode, const uint8_t release
 _PIN(p),
 _RESTING(released_state)
 {
-  pinMode(p, mode);
+  pinMode(_PIN, mode);
 
   // Attach using lambda function instead of std::bind
   // std::bind(&Button::_ISR, this)
   attachInterrupt(
-    p, 
+    _PIN, 
     [this]() { this->_ISR(); },
     CHANGE
   );  
